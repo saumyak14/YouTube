@@ -2,57 +2,78 @@ const express = require("express")
 const https = require("https")
 const bodyParser = require("body-parser")
 const app = express()
-const path=require("path")
+const path = require("path")
 
-app.set("view engine","ejs")
-app.set("views",path.join(__dirname,"views"))
+var jsdom = require("jsdom");
+const {JSDOM} = jsdom;
+const {window} = new JSDOM();
+const {document} = (new JSDOM('')).window;
+global.document = document;
+var $ = require('jquery')
+
+var $ = jQuery = require('jquery')(window);
+
+app.set("view engine", "ejs")
+app.set("views", path.join(__dirname, "views"))
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
   extended: false
 }))
 
-app.use(express.static(path.join(__dirname,"public")))
+app.use(express.static(path.join(__dirname, "public")))
+ let ytData=""
+ let data = '';
 
 app.post("/", function(req, res) {
-  const query = req.body.title
-  const apikey = "AIzaSyA4tF7X8Fqkhdoe7xl5LyJtNIZPUYJZLIE"
-  const url = "https://www.googleapis.com/youtube/v3/search?part=snippet&key=" + apikey + "&type=video&q=" + query + "&maxResults=2"
+      const query = req.body.title
+      const apikey = "AIzaSyAtpJ9TJAVfH-Qqzf3BVqh1LLACuZ2Xdzk"
+      const url = "https://www.googleapis.com/youtube/v3/search?part=snippet&key=" + apikey + "&type=video&q=" + query + "&maxResults=2"
 
 
-  https.get(url, (resp) => {
-  let data = '';
-    console.log(resp.statusCode);
+      https.get(url, (resp) => {
 
-    // A chunk of data has been recieved.
 
-    resp.on('data', (chunk) => {
+        console.log(resp.statusCode);
 
-      data += chunk;
-    });
+        // A chunk of data has been recieved.
 
-    resp.on('end', () => {
-      // console.log(data);
-       const ytData=JSON.parse(data)
-       console.log(ytData);
+        resp.on('data', (chunk) => {
 
-       ytData.items.forEach(item => {
-         console.log(item.id.videoId);
-            video = `
-                <iframe width="420" height="315" src="http://www.youtube.com/embed/${item.id.videoId}" frameborder="0" allowfullscreen></iframe>
-                   `
-              $("#videos").append(video)
-            })
+          data += chunk;
+        });
 
-      })
+        resp.on('end', () =>{
+
+          ytData = JSON.parse(data)
+          console.log(ytData);
+
+            res.redirect("/content")
+
+              // ytData.items.forEach(item => {
+              // console.log(item.id.videoId);
+              //
+              // video = `
+              //     <iframe width="420" height="315" src="http://www.youtube.com/embed/${item.id.videoId}" frameborder="0" allowfullscreen></iframe>
+              //        `
+              //  $("#videos").append(video)
+              //
+              //   console.log(video);
+              // })
+
+        })
+// res.redirect("/")
+        });
    });
-   })
-
-  app.get("/", function(req, res) {
-    res.render("index")
-})
+      app.get("/", function(req, res) {
+        res.render("index")
+      })
 
 
-  app.listen(3000, function() {
-  console.log("Server started on port 3000");
-})
+      app.get("/content", function(req, res) {
+        res.render("content", {ytData: ytData})
+      })
+
+      app.listen(3000, function() {
+        console.log("Server started on port 3000");
+      })
