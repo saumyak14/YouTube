@@ -21,14 +21,17 @@ app.use(bodyParser.urlencoded({
   extended: false
 }))
 
+
+
 app.use(express.static(path.join(__dirname, "public")))
  let ytData=""
  let data = '';
 
 app.post("/", function(req, res) {
+
       const query = req.body.title
       const apikey = "AIzaSyAtpJ9TJAVfH-Qqzf3BVqh1LLACuZ2Xdzk"
-      const url = "https://www.googleapis.com/youtube/v3/search?part=snippet&key=" + apikey + "&type=video&q=" + query + "&maxResults=2"
+      const url = "https://www.googleapis.com/youtube/v3/search?part=snippet&key=" + apikey + "&type=video&q=" + query + "&maxResults=10"
 
 
       https.get(url, (resp) => {
@@ -43,30 +46,32 @@ app.post("/", function(req, res) {
           data += chunk;
         });
 
+
         resp.on('end', () =>{
 
           ytData = JSON.parse(data)
           console.log(ytData);
 
-            res.redirect("/content")
+
+             res.redirect("/content")
 
               // ytData.items.forEach(item => {
               // console.log(item.id.videoId);
               //
               // video = `
-              //     <iframe width="420" height="315" src="http://www.youtube.com/embed/${item.id.videoId}" frameborder="0" allowfullscreen></iframe>
+              //     <iframe width="420" height="315" src="http://www.youtube.com/embed/<%=item.id.videoId%>" frameborder="0" allowfullscreen></iframe>
               //        `
               //  $("#videos").append(video)
               //
               //   console.log(video);
               // })
-
         })
+
 // res.redirect("/")
         });
    });
       app.get("/", function(req, res) {
-        res.render("index")
+        res.render("index",{ytData:ytData})
       })
 
 
