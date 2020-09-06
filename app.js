@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express")
 const https = require("https")
 const bodyParser = require("body-parser")
@@ -21,16 +22,14 @@ app.use(bodyParser.urlencoded({
   extended: false
 }))
 
-
-
 app.use(express.static(path.join(__dirname, "public")))
- let ytData=""
- let data = '';
+ ytData=" "
+ data = '';
 
 app.post("/", function(req, res) {
 
-      const query = req.body.title
-      const apikey = "AIzaSyAtpJ9TJAVfH-Qqzf3BVqh1LLACuZ2Xdzk"
+      query = req.body.title
+      const apikey=process.env.API_KEY
       const url = "https://www.googleapis.com/youtube/v3/search?part=snippet&key=" + apikey + "&type=video&q=" + query + "&maxResults=10"
 
 
@@ -53,7 +52,11 @@ app.post("/", function(req, res) {
           console.log(ytData);
 
 
+
+
              res.redirect("/content")
+
+
 
               // ytData.items.forEach(item => {
               // console.log(item.id.videoId);
