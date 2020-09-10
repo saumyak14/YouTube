@@ -30,7 +30,7 @@ app.post("/", function(req, res) {
 
       query = req.body.title
       const apikey=process.env.API_KEY
-      const url = "https://www.googleapis.com/youtube/v3/search?part=snippet&key=" + apikey + "&type=video&q=" + query + "&maxResults=10"
+      const url = "https://www.googleapis.com/youtube/v3/search?part=snippet&key=" + apikey + "&type=video&q=" + query + "&maxResults=12"
 
 
       https.get(url, (resp) => {
@@ -51,26 +51,11 @@ app.post("/", function(req, res) {
           ytData = JSON.parse(data)
           console.log(ytData);
 
-
-
-
              res.redirect("/content")
 
 
-
-              // ytData.items.forEach(item => {
-              // console.log(item.id.videoId);
-              //
-              // video = `
-              //     <iframe width="420" height="315" src="http://www.youtube.com/embed/<%=item.id.videoId%>" frameborder="0" allowfullscreen></iframe>
-              //        `
-              //  $("#videos").append(video)
-              //
-              //   console.log(video);
-              // })
         })
 
-// res.redirect("/")
         });
    });
       app.get("/", function(req, res) {
