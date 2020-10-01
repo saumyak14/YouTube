@@ -1,3 +1,3 @@
 # YouTube
 
-#### This application is simple illustration to search for Youtube channel videos using **YouTube API v3.**
+#### This application is illustration of **Youtube Data API V3** integration using nodejs to search for any channel videos.
